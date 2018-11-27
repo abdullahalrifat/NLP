@@ -1,0 +1,4 @@
+https://dzone.com/articles/nlp-tutorial-using-python-nltk-simple-examples
+http://niawdeleon.com/nlp-voice-recognition-resources/
+https://chatbotsmagazine.com/delbot-nlp-python-bot-1a46d865e38b
+https://www.texttomp3.online/
