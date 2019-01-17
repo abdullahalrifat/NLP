@@ -31,8 +31,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'convert_speech_to_text.apps.ConvertSpeechToTextConfig',
-    'translate_text.apps.TranslateTextConfig',
     'process.apps.ProcessConfig',
     'rest_framework',
     'django.contrib.admin',

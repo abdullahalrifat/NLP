@@ -20,7 +20,6 @@ from django.urls import path, include, re_path
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^api-auth/', include('rest_framework.urls')),
-    url(r'^cst/', include('convert_speech_to_text.urls')),
-    url(r'^tt/', include('translate_text.urls')),
+    path('', include('process.urls')),
     re_path('api/(?P<version>(v1|v2))/', include('process.urls'))
 ]
