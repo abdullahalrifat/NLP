@@ -26,12 +26,12 @@ class Bot(views.APIView):
         # text = response(text)
 
         user_response = text.lower()
-        if (user_response != 'bye'):
-            if (user_response == 'thanks' or user_response == 'thank you'):
+        if user_response != 'bye':
+            if user_response == 'thanks' or user_response == 'thank you':
                 flag = False
                 text = "ROBO: You are welcome.."
             else:
-                if (greeting(user_response) != None):
+                if greeting(user_response) != None:
                     text = "ROBO: " + greeting(user_response)
                 else:
                     # print("ROBO: ", end="")
@@ -72,6 +72,8 @@ word_tokens[:5]
 
 
 lemmer = nltk.stem.WordNetLemmatizer()
+
+
 def LemTokens(tokens):
     return [lemmer.lemmatize(token) for token in tokens]
 remove_punct_dict = dict((ord(punct), None) for punct in string.punctuation)
