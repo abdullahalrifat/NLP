@@ -25,6 +25,7 @@ ACCESS_TOKEN ="EAADbAKIlGVIBALXHqFaTZAPQV3C4KhSJjAlzDmfQnZAeuiTmEOtuvpyHFm8NdmzA
 
 VERIFY_TOKEN = 'my_voice_is_my_password_verify_me'
 
+
 class Bot(views.APIView):
     chatterbot = ChatBot("NLP")
 
