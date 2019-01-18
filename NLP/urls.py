@@ -16,6 +16,9 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path, include, re_path
+from django.conf.urls.static import static
+
+from NLP import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -23,3 +26,8 @@ urlpatterns = [
     path('', include('process.urls')),
     re_path('api/(?P<version>(v1|v2))/', include('process.urls'))
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+else:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
