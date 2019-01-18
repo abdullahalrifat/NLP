@@ -7,108 +7,145 @@ from rest_framework.response import Response
 from rest_framework import views, status
 
 from process.serializers import TextSerializer
-
+import json
+import sys
 import warnings
 import nltk
 import numpy as np
 import random
 import string # to process standard python strings
-
+from chatterbot import ChatBot
+from django.http import JsonResponse
+# from chatterbot.trainers import ChatterBotCorpusTrainer
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
+ACCESS_TOKEN ="EAADbAKIlGVIBALXHqFaTZAPQV3C4KhSJjAlzDmfQnZAeuiTmEOtuvpyHFm8NdmzAmqNdFOlZARm1J98q9JWah9sjCIS1MOqLzKELqWHZA1vtlZBrZCar3Tq1kMSpG9wHbYZBZBZBcdBdKlPP13ZBIbq7XqDOxTrB1g4AQnw8N7Y4LiLNjHCUVd80Os"
+
+VERIFY_TOKEN = 'my_voice_is_my_password_verify_me'
 
 class Bot(views.APIView):
+    chatterbot = ChatBot("NLP")
 
     def get(self, request, version, format=None):
         text = request.GET['text']
         # text = response(text)
+        # chatbot = ChatBot('Ron Obvious')
 
-        user_response = text.lower()
-        if (user_response != 'bye'):
-            if (user_response == 'thanks' or user_response == 'thank you'):
-                flag = False
-                text = "ROBO: You are welcome.."
-            else:
-                if (greeting(user_response) != None):
-                    text = "ROBO: " + greeting(user_response)
-                else:
-                    # print("ROBO: ", end="")
-                    text = response(user_response)
-                    sent_tokens.remove(user_response)
-        else:
-            flag = False
-            text = "ROBO: Bye! take care.."
+        # Create a new trainer for the chatbot
+        # trainer = ChatterBotCorpusTrainer(chatbot)
+
+        # Train the chatbot based on the english corpus
+        # trainer.train("chatterbot.corpus.english")
+
+        # Get a response to an input statement
+
+        response = self.chatterbot.get_response(text)
+        response_data = response.serialize()
         # serializer = TextSerializer(text, many=True)
-        return Response(text, status=status.HTTP_201_CREATED)
+        return Response(response_data, status=status.HTTP_201_CREATED)
 
     def post(self, request, version, format=None):
-        return Response(status=status.HTTP_400_BAD_REQUEST)
-
-# coding: utf-8
-
-# # Meet Robo: your friend
-
-
-warnings.filterwarnings("ignore")
-
-# nltk.download() # for downloading packages
+        text = request.POST['text']
+        response = self.chatterbot.get_response(text)
+        response_data = response.serialize()
+        # serializer = TextSerializer(text, many=True)
+        return Response(response_data, status=status.HTTP_201_CREATED)
 
 
-f = open('/mnt/Work/NLP/process/chatbot.txt','r',errors = 'ignore')
-raw = f.read()
-raw = raw.lower()  # converts to lowercase
-nltk.download('punkt')  # first-time use only
-nltk.download('wordnet')  # first-time use only
-sent_tokens = nltk.sent_tokenize(raw)  # converts to list of sentences
-word_tokens = nltk.word_tokenize(raw)  # converts to list of words
+class Verify(views.APIView):
+    chatterbot = ChatBot("NLP")
+
+    def get(self, request, version, format=None):
+        text = request.GET['text']
+        # text = response(text)
+        # chatbot = ChatBot('Ron Obvious')
+
+        # Create a new trainer for the chatbot
+        # trainer = ChatterBotCorpusTrainer(chatbot)
+
+        # Train the chatbot based on the english corpus
+        # trainer.train("chatterbot.corpus.english")
+
+        # Get a response to an input statement
+
+        token_sent = request.args.get("hub.verify_token")
+        return verify_fb_token(token_sent, request)
+        # serializer = TextSerializer(text, many=True)
+        # return Response(response_data, status=status.HTTP_201_CREATED)
+
+    def post(self, request, version, format=None):
+        data = request.json
+        # log(data)  # you may not want to log every incoming message in production, but it's good for testing
+        if data["object"] == "page":
+            for entry in data.get("entry"):
+                if "messaging" in entry:
+                    for event in entry.get("messaging"):
+                        #   print(event.get('sender'))
+                        #   print(event.get('sender').get('id'))
+                        #   sender_id = event.get('sender').get('id')
+                        if event.get("message"):  # delivery confirmation
+                            recipient_id = event.get('recipient').get('id')
+                            sender_id = event.get('sender').get('id')
+                            text = event.get("message")
+                            response = self.chatterbot.get_response(text)
+                            response_data = response.serialize()
+                            send_message(request, sender_id, response_data)
+
+                        if event.get("delivery"):
+                            pass
+
+                        if event.get("optin"):  # optin confirmation
+                            user_ref = event.get('optin').get("user_ref")
+                            send_message(user_ref,
+                                         "Good to see you",
+                                         category="user_ref")
+                        if event.get("postback"):  # user clicked/tapped "postback" button in earlier message
+                            pass
+        return request.args.text("ok")
 
 
-sent_tokens[:2]
+def verify_fb_token(token_sent,request):
+    if request.args.get("hub.mode") == "subscribe" and request.args.get("hub.challenge"):
+        if not request.args.get("hub.verify_token") == VERIFY_TOKEN:
+            return request.args.text("Verification token mismatch", status=403)
+        return request.args.text(request.args["hub.challenge"][0])
+
+    return request.args.text("Hello world")
 
 
-word_tokens[:5]
+def send_message(requests,
+                 recipient_id,
+                 message_text,
+                 category="id",
+                 message_type="UPDATE"):
+
+    # log("sending message to {recipient}: {text}".format(
+        # recipient=recipient_id, text=message_text))
+
+    params = {
+        "access_token": ACCESS_TOKEN
+    }
+    headers = {
+        "Content-Type": "application/json"
+    }
+    data = json.dumps({
+        "recipient": {
+            category: recipient_id
+        },
+        "message": {
+            "text": message_text
+        },
+        "messaging_type": message_type
+    })
+    r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+                      params=params, headers=headers, data=data)
+    log(r.text)
+    if r.status_code != 200:
+        log(r.status_code)
 
 
-lemmer = nltk.stem.WordNetLemmatizer()
-def LemTokens(tokens):
-    return [lemmer.lemmatize(token) for token in tokens]
-remove_punct_dict = dict((ord(punct), None) for punct in string.punctuation)
-def LemNormalize(text):
-    return LemTokens(nltk.word_tokenize(text.lower().translate(remove_punct_dict)))
-
-
-GREETING_INPUTS = ("hello", "hi", "greetings", "sup", "what's up","hey",)
-GREETING_RESPONSES = ["hi", "hey", "*nods*", "hi there", "hello", "I am glad! You are talking to me"]
-
-
-# Checking for greetings
-def greeting(sentence):
-    """If user's input is a greeting, return a greeting response"""
-    for word in sentence.split():
-        if word.lower() in GREETING_INPUTS:
-            return random.choice(GREETING_RESPONSES)
-
-
-# Generating response
-def response(user_response):
-    robo_response=''
-    sent_tokens.append(user_response)
-    TfidfVec = TfidfVectorizer(tokenizer=LemNormalize, stop_words='english')
-    tfidf = TfidfVec.fit_transform(sent_tokens)
-    vals = cosine_similarity(tfidf[-1], tfidf)
-    idx=vals.argsort()[0][-2]
-    flat = vals.flatten()
-    flat.sort()
-    req_tfidf = flat[-2]
-    if(req_tfidf==0):
-        robo_response=robo_response+"I am sorry! I don't understand you"
-        return robo_response
-    else:
-        robo_response = robo_response+sent_tokens[idx]
-        return robo_response
-
-
-flag=True
-print("ROBO: My name is Robo. I will answer your queries about Chatbots. If you want to exit, type Bye!")
+def log(message):  # simple wrapper for logging to stdout on heroku
+    print(str(message))
+    sys.stdout.flush()
