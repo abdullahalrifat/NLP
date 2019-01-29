@@ -5,6 +5,7 @@ from rest_framework import generics, views
 from rest_framework.parsers import FileUploadParser
 from rest_framework.response import Response
 from rest_framework import views, status
+from chatterbot.trainers import ChatterBotCorpusTrainer
 
 from process.serializers import TextSerializer
 import json
@@ -24,6 +25,21 @@ from sklearn.metrics.pairwise import cosine_similarity
 ACCESS_TOKEN ="EAADbAKIlGVIBALXHqFaTZAPQV3C4KhSJjAlzDmfQnZAeuiTmEOtuvpyHFm8NdmzAmqNdFOlZARm1J98q9JWah9sjCIS1MOqLzKELqWHZA1vtlZBrZCar3Tq1kMSpG9wHbYZBZBZBcdBdKlPP13ZBIbq7XqDOxTrB1g4AQnw8N7Y4LiLNjHCUVd80Os"
 
 VERIFY_TOKEN = 'my_voice_is_my_password_verify_me'
+
+
+chatterbot = ChatBot("NLP")
+
+# Create a new trainer for the chatbot
+trainer = ChatterBotCorpusTrainer(chatterbot)
+
+# Train based on the english corpus
+trainer.train("chatterbot.corpus.english")
+
+# Train based on english greetings corpus
+trainer.train("chatterbot.corpus.english.greetings")
+
+# Train based on the english conversations corpus
+trainer.train("chatterbot.corpus.english.conversations")
 
 
 class Bot(views.APIView):
