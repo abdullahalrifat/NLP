@@ -26,8 +26,4 @@ urlpatterns = [
     path('', include('process.urls')),
     re_path('api/(?P<version>(v1|v2))/', include('process.urls'))
 ]
-if settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
-else:
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
