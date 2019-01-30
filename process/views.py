@@ -152,7 +152,7 @@ def send_message(request,
             category: recipient_id
         },
         "message": {
-            "text": message_text
+            "text": message_text["text"]
         },
         "messaging_type": message_type
     })
