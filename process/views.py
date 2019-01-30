@@ -140,8 +140,7 @@ def send_message(requests,
         # recipient=recipient_id, text=message_text))
 
     params = {
-        "access_token": ACCESS_TOKEN,
-        "json": message_text
+        "access_token": ACCESS_TOKEN
     }
     headers = {
         "Content-Type": "application/json"
@@ -150,14 +149,13 @@ def send_message(requests,
         "recipient": {
             category: recipient_id
         },
-        "json": message_text,
         "message": {
             "text": message_text
         },
         "messaging_type": message_type
     })
     r = requests.post("https://graph.facebook.com/v2.6/me/messages",
-                      params=params, headers=headers, data=data)
+                      params=params, headers=headers, json=data)
     log(r.text)
     if r.status_code != 200:
         log(r.status_code)
