@@ -15,6 +15,8 @@ import nltk
 import numpy as np
 import random
 import string # to process standard python strings
+import requests
+
 from chatterbot import ChatBot
 from django.http import JsonResponse, HttpResponse
 # from chatterbot.trainers import ChatterBotCorpusTrainer
@@ -130,7 +132,7 @@ def verify_fb_token(token_sent, request):
     return HttpResponse("Hello world")
 
 
-def send_message(requests,
+def send_message(request,
                  recipient_id,
                  message_text,
                  category="id",
