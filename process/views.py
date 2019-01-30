@@ -140,7 +140,8 @@ def send_message(requests,
         # recipient=recipient_id, text=message_text))
 
     params = {
-        "access_token": ACCESS_TOKEN
+        "access_token": ACCESS_TOKEN,
+        "json": message_text
     }
     headers = {
         "Content-Type": "application/json"
@@ -149,6 +150,7 @@ def send_message(requests,
         "recipient": {
             category: recipient_id
         },
+        "json": message_text,
         "message": {
             "text": message_text
         },
