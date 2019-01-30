@@ -75,7 +75,7 @@ class Verify(views.APIView):
     chatterbot = ChatBot("NLP")
 
     def get(self, request, version, format=None):
-        text = request.GET['text']
+        # text = request.GET['text']
         # text = response(text)
         # chatbot = ChatBot('Ron Obvious')
 
