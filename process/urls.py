@@ -7,5 +7,6 @@ from process.views import *
 urlpatterns = [
     url(r'^text$', Bot.as_view(), name='text'),
     url(r'^webhook', Verify.as_view(), name='webhook'),
+    url(r'^privacy', privacy, name='privacy'),
 
 ]

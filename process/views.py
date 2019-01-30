@@ -44,6 +44,10 @@ trainer.train("chatterbot.corpus.english.greetings")
 trainer.train("chatterbot.corpus.english.conversations")
 
 
+def privacy(request):
+    return render(request, 'privacy_policy.html', {})
+
+
 class Bot(views.APIView):
 
     def get(self, request, version, format=None):
