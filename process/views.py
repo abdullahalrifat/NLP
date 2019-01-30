@@ -91,7 +91,7 @@ class Verify(views.APIView):
         # return Response(response_data, status=status.HTTP_201_CREATED)
 
     def post(self, request, version, format=None):
-        data = request.json
+        data = json.loads(self.request.body.decode('utf-8'))
         # log(data)  # you may not want to log every incoming message in production, but it's good for testing
         if data["object"] == "page":
             for entry in data.get("entry"):
@@ -155,7 +155,7 @@ def send_message(requests,
         "messaging_type": message_type
     })
     r = requests.post("https://graph.facebook.com/v2.6/me/messages",
-                      params=params, headers=headers, json=data)
+                      params=params, headers=headers, data=data)
     log(r.text)
     if r.status_code != 200:
         log(r.status_code)
