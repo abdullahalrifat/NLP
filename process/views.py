@@ -16,7 +16,7 @@ import numpy as np
 import random
 import string # to process standard python strings
 from chatterbot import ChatBot
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 # from chatterbot.trainers import ChatterBotCorpusTrainer
 
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -122,12 +122,12 @@ class Verify(views.APIView):
 
 
 def verify_fb_token(token_sent, request):
-    if request.args.get("hub.mode") == "subscribe" and request.args.get("hub.challenge"):
-        if not request.args.get("hub.verify_token") == VERIFY_TOKEN:
-            return request.args.text("Verification token mismatch", status=403)
-        return request.args.text(request.args["hub.challenge"][0])
+    if request.GET("hub.mode") == "subscribe" and request.GET("hub.challenge"):
+        if not request.GET("hub.verify_token") == VERIFY_TOKEN:
+            return HttpResponse("Verification token mismatch", status=403)
+        return HttpResponse(request.GET["hub.challenge"][0])
 
-    return request.args.text("Hello world")
+    return HttpResponse("Hello world")
 
 
 def send_message(requests,
