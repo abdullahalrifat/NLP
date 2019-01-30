@@ -122,8 +122,8 @@ class Verify(views.APIView):
 
 
 def verify_fb_token(token_sent, request):
-    if request.GET("hub.mode") == "subscribe" and request.GET("hub.challenge"):
-        if not request.GET("hub.verify_token") == VERIFY_TOKEN:
+    if request.GET["hub.mode"] == "subscribe" and request.GET["hub.challenge"]:
+        if not request.GET["hub.verify_token"] == VERIFY_TOKEN:
             return HttpResponse("Verification token mismatch", status=403)
         return HttpResponse(request.GET["hub.challenge"][0])
 
