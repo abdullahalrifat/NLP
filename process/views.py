@@ -120,7 +120,7 @@ class Verify(views.APIView):
                                          category="user_ref")
                         if event.get("postback"):  # user clicked/tapped "postback" button in earlier message
                             pass
-        return request.args.text("ok")
+        return HttpResponse("Ok")
 
 
 def verify_fb_token(token_sent, request):
