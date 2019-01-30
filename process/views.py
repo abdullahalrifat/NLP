@@ -43,7 +43,6 @@ trainer.train("chatterbot.corpus.english.conversations")
 
 
 class Bot(views.APIView):
-    chatterbot = ChatBot("NLP")
 
     def get(self, request, version, format=None):
         text = request.GET['text']
@@ -58,21 +57,20 @@ class Bot(views.APIView):
 
         # Get a response to an input statement
 
-        response = self.chatterbot.get_response(text)
+        response = chatterbot.get_response(text)
         response_data = response.serialize()
         # serializer = TextSerializer(text, many=True)
         return Response(response_data, status=status.HTTP_201_CREATED)
 
     def post(self, request, version, format=None):
         text = request.POST['text']
-        response = self.chatterbot.get_response(text)
+        response = chatterbot.get_response(text)
         response_data = response.serialize()
         # serializer = TextSerializer(text, many=True)
         return Response(response_data, status=status.HTTP_201_CREATED)
 
 
 class Verify(views.APIView):
-    chatterbot = ChatBot("NLP")
 
     def get(self, request, version, format=None):
         # text = request.GET['text']
@@ -87,7 +85,7 @@ class Verify(views.APIView):
 
         # Get a response to an input statement
 
-        token_sent = request.args.get("hub.verify_token")
+        token_sent = request.GET['hub.verify_token']
         return verify_fb_token(token_sent, request)
         # serializer = TextSerializer(text, many=True)
         # return Response(response_data, status=status.HTTP_201_CREATED)
@@ -106,7 +104,7 @@ class Verify(views.APIView):
                             recipient_id = event.get('recipient').get('id')
                             sender_id = event.get('sender').get('id')
                             text = event.get("message")
-                            response = self.chatterbot.get_response(text)
+                            response = chatterbot.get_response(text)
                             response_data = response.serialize()
                             send_message(request, sender_id, response_data)
 
@@ -123,7 +121,7 @@ class Verify(views.APIView):
         return request.args.text("ok")
 
 
-def verify_fb_token(token_sent,request):
+def verify_fb_token(token_sent, request):
     if request.args.get("hub.mode") == "subscribe" and request.args.get("hub.challenge"):
         if not request.args.get("hub.verify_token") == VERIFY_TOKEN:
             return request.args.text("Verification token mismatch", status=403)
