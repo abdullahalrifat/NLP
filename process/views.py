@@ -18,7 +18,7 @@ import string # to process standard python strings
 import requests
 
 from chatterbot import ChatBot
-import chatterbot as chatbot
+
 from django.http import JsonResponse, HttpResponse
 # from chatterbot.trainers import ChatterBotCorpusTrainer
 
