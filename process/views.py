@@ -18,7 +18,6 @@ import string # to process standard python strings
 import requests
 
 from chatterbot import ChatBot
-
 from django.http import JsonResponse, HttpResponse
 # from chatterbot.trainers import ChatterBotCorpusTrainer
 
@@ -30,9 +29,7 @@ ACCESS_TOKEN ="EAADbAKIlGVIBALXHqFaTZAPQV3C4KhSJjAlzDmfQnZAeuiTmEOtuvpyHFm8NdmzA
 VERIFY_TOKEN = 'my_voice_is_my_password_verify_me'
 
 
-chatterbot = ChatBot(
-    "NLP"
-)
+chatterbot = ChatBot("NLP")
 
 # Create a new trainer for the chatbot
 trainer = ChatterBotCorpusTrainer(chatterbot)
