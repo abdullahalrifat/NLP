@@ -31,22 +31,7 @@ VERIFY_TOKEN = 'my_voice_is_my_password_verify_me'
 
 
 chatterbot = ChatBot(
-    "NLP",
-    storage_adapter='chatterbot.storage.SQLStorageAdapter',
-    logic_adapters=[
-        'chatterbot.logic.MathematicalEvaluation',
-        'chatterbot.logic.TimeLogicAdapter',
-        {
-            'import_path': 'chatterbot.logic.BestMatch',
-            'default_response': 'I am sorry, but I do not understand.'
-        },
-        {
-            'import_path': 'chatterbot.logic.SpecificResponseAdapter',
-            'input_text': 'Help me!',
-            'output_text': 'Ok, here is a link: http://uiubot.herokuapp.com/'
-        }
-
-    ],
+    "NLP"
 )
 
 # Create a new trainer for the chatbot
