@@ -110,7 +110,7 @@ class Verify(views.APIView):
                             recipient_id = event.get('recipient').get('id')
                             sender_id = event.get('sender').get('id')
                             text = event.get("message")
-                            response = chatterbot.get_response(text)
+                            response = chatterbot.get_response(text=text)
                             response_data = response.serialize()
                             send_message(request, sender_id, response_data)
 
