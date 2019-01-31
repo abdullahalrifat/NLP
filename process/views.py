@@ -18,6 +18,7 @@ import string # to process standard python strings
 import requests
 
 from chatterbot import ChatBot
+import chatterbot as chatbot
 from django.http import JsonResponse, HttpResponse
 # from chatterbot.trainers import ChatterBotCorpusTrainer
 
@@ -29,7 +30,24 @@ ACCESS_TOKEN ="EAADbAKIlGVIBALXHqFaTZAPQV3C4KhSJjAlzDmfQnZAeuiTmEOtuvpyHFm8NdmzA
 VERIFY_TOKEN = 'my_voice_is_my_password_verify_me'
 
 
-chatterbot = ChatBot("NLP")
+chatterbot = ChatBot(
+    "NLP",
+    storage_adapter='chatbot.storage.SQLStorageAdapter',
+    logic_adapters=[
+        'chatbot.logic.MathematicalEvaluation',
+        'chatbot.logic.TimeLogicAdapter',
+        {
+            'import_path': 'chatbot.logic.BestMatch',
+            'default_response': 'I am sorry, but I do not understand.'
+        },
+        {
+            'import_path': 'chatbot.logic.SpecificResponseAdapter',
+            'input_text': 'Help me!',
+            'output_text': 'Ok, here is a link: http://uiubot.herokuapp.com/'
+        }
+
+    ],
+)
 
 # Create a new trainer for the chatbot
 trainer = ChatterBotCorpusTrainer(chatterbot)
